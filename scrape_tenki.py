@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def parse_weather(weather_data):
+def _parse_weather(weather_data):
     date = weather_data.find(class_="left-style").text
     index = weather_data.find(class_="indexes-telop-0").string
     comment = weather_data.find(class_="indexes-telop-1").string
@@ -38,7 +38,7 @@ def scrape_tenki(search_word):
     dress_r = requests.get(f"https://tenki.jp/indexes/dress/{address_code}/")
     search_r_bs = BeautifulSoup(dress_r.content, "html.parser")
     dress_area = [v for v in search_r_bs.find(id="delimiter").text.split("\n") if v][-2:]
-    today_weather = parse_weather(search_r_bs.find(class_="today-weather"))
+    today_weather = _parse_weather(search_r_bs.find(class_="today-weather"))
     # tomorrow_weather = parse_weather(search_r_bs.find(class_="tomorrow-weather"))
 
     return match_address, dress_area, today_weather

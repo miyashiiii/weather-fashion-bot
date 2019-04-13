@@ -5,6 +5,8 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+from scrape_tenki import scrape_tenki
+
 CHANNEL_ACCESS_TOKEN = os.environ['CHANNEL_ACCESS_TOKEN']
 CHANNEL_SECRET = os.environ['CHANNEL_SECRET']
 app = Flask(__name__)
@@ -24,8 +26,6 @@ def callback():
 
     # handle webhook body
     try:
-        print(type(body))
-        print(type(signature))
         handler.handle(body, signature)
     except InvalidSignatureError:
         print("Invalid signature. Please check your channel access token/channel secret.")
@@ -36,9 +36,15 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    weather = scrape_tenki(event.message.text)
+    area, fashion = weather[0], weather[2][2]
+    reply_mes = f"""
+    地域: {area}
+    {fashion}
+    """
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        TextSendMessage(text=reply_mes))
 
 
 if __name__ == "__main__":
