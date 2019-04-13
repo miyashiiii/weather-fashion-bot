@@ -38,10 +38,9 @@ def callback():
 def handle_message(event):
     weather = scrape_tenki(event.message.text)
     area, fashion = weather[0], weather[2][2]
-    reply_mes = f"""
-    地域: {area}
-    {fashion}
-    """
+    reply_mes = \
+        f"""地域: {area}
+{fashion}"""
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_mes))
